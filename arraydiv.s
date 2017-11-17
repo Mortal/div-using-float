@@ -7,22 +7,21 @@ intdiv:
 .LFB0:
 	.cfi_startproc
 	cmpq	%rsi, %rdi
-	movq	%rdx, %r8
+	movq	%rdx, %rcx
 	je	.L1
-	leaq	4(%rdi), %rax
-	subq	%rax, %rsi
-	shrq	$2, %rsi
-	leaq	4(,%rsi,4), %r9
-	xorl	%esi, %esi
+	movl	$42, %r8d
 	.p2align 4,,10
 	.p2align 3
 .L3:
-	movl	(%rdi,%rsi), %eax
+	addq	$4, %rdi
+	movl	-4(%rdi), %eax
 	xorl	%edx, %edx
-	divl	(%r8,%rsi)
-	movl	%eax, (%rcx,%rsi)
-	addq	$4, %rsi
-	cmpq	%r9, %rsi
+	addq	$4, %rcx
+	divl	%r8d
+	cmpq	%rdi, %rsi
+	movl	%eax, -4(%rcx)
+	notl	%eax
+	movl	%eax, %r8d
 	jne	.L3
 .L1:
 	rep ret
@@ -37,25 +36,22 @@ floatdiv:
 	.cfi_startproc
 	cmpq	%rsi, %rdi
 	je	.L6
-	leaq	4(%rdi), %rax
-	subq	%rax, %rsi
-	shrq	$2, %rsi
-	leaq	4(,%rsi,4), %r8
-	xorl	%esi, %esi
+	movl	$42, %eax
 	.p2align 4,,10
 	.p2align 3
 .L12:
-	movl	(%rdi,%rsi), %eax
-	pxor	%xmm0, %xmm0
+	addq	$4, %rdi
+	movl	-4(%rdi), %ecx
+	addq	$4, %rdx
 	pxor	%xmm1, %xmm1
+	cmpq	%rdi, %rsi
+	pxor	%xmm0, %xmm0
+	cvtsi2sdq	%rcx, %xmm1
 	cvtsi2sdq	%rax, %xmm0
-	movl	(%rdx,%rsi), %eax
-	cvtsi2sdq	%rax, %xmm1
-	divsd	%xmm1, %xmm0
-	cvttsd2siq	%xmm0, %rax
-	movl	%eax, (%rcx,%rsi)
-	addq	$4, %rsi
-	cmpq	%rsi, %r8
+	divsd	%xmm0, %xmm1
+	cvttsd2siq	%xmm1, %rax
+	movl	%eax, -4(%rdx)
+	notl	%eax
 	jne	.L12
 .L6:
 	rep ret
