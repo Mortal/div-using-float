@@ -1,4 +1,4 @@
-CFLAGS := -Wall -Wextra -O2 -std=c99
+CFLAGS := -Wall -Wextra -O2 -march=native -std=c99
 
 all: main arraydiv.s
 .PHONY: all

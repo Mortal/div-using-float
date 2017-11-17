@@ -6,9 +6,9 @@
 intdiv:
 .LFB0:
 	.cfi_startproc
-	cmpq	%rsi, %rdi
 	movq	%rdx, %r8
-	je	.L1
+	cmpq	%rsi, %rdi
+	je	.L5
 	leaq	4(%rdi), %rax
 	subq	%rax, %rsi
 	shrq	$2, %rsi
@@ -24,8 +24,8 @@ intdiv:
 	addq	$4, %rsi
 	cmpq	%r9, %rsi
 	jne	.L3
-.L1:
-	rep ret
+.L5:
+	ret
 	.cfi_endproc
 .LFE0:
 	.size	intdiv, .-intdiv
@@ -36,7 +36,7 @@ floatdiv:
 .LFB1:
 	.cfi_startproc
 	cmpq	%rsi, %rdi
-	je	.L6
+	je	.L15
 	leaq	4(%rdi), %rax
 	subq	%rax, %rsi
 	shrq	$2, %rsi
@@ -44,21 +44,21 @@ floatdiv:
 	xorl	%esi, %esi
 	.p2align 4,,10
 	.p2align 3
-.L12:
+.L13:
 	movl	(%rdi,%rsi), %eax
-	pxor	%xmm0, %xmm0
-	pxor	%xmm1, %xmm1
-	cvtsi2sdq	%rax, %xmm0
+	vxorpd	%xmm0, %xmm0, %xmm0
+	vxorpd	%xmm1, %xmm1, %xmm1
+	vcvtsi2sdq	%rax, %xmm0, %xmm0
 	movl	(%rdx,%rsi), %eax
-	cvtsi2sdq	%rax, %xmm1
-	divsd	%xmm1, %xmm0
-	cvttsd2siq	%xmm0, %rax
+	vcvtsi2sdq	%rax, %xmm1, %xmm1
+	vdivsd	%xmm1, %xmm0, %xmm0
+	vcvttsd2siq	%xmm0, %rax
 	movl	%eax, (%rcx,%rsi)
 	addq	$4, %rsi
 	cmpq	%rsi, %r8
-	jne	.L12
-.L6:
-	rep ret
+	jne	.L13
+.L15:
+	ret
 	.cfi_endproc
 .LFE1:
 	.size	floatdiv, .-floatdiv
