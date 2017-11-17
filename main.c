@@ -18,19 +18,19 @@ int main() {
 	struct timeval t1;
 	struct timeval t2;
 	gettimeofday(&t1, 0);
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 11; i++) {
 		intdiv(n, n+N, d, qi);
 		gettimeofday(&t2, 0);
 		printf("int %.6f\n", 1e-6 * ((t2.tv_sec - t1.tv_sec) * 1e6 + t2.tv_usec - t1.tv_usec));
 		floatdiv(n, n+N, d, qf);
 		gettimeofday(&t1, 0);
 		printf("double %.6f\n", 1e-6 * ((t1.tv_sec - t2.tv_sec) * 1e6 + t1.tv_usec - t2.tv_usec));
-		intdiv(n, n+N, d, qi);
-		gettimeofday(&t2, 0);
-		printf("int %.6f\n", 1e-6 * ((t2.tv_sec - t1.tv_sec) * 1e6 + t2.tv_usec - t1.tv_usec));
-		floatdiv(n, n+N, d, qf);
+		int errors = 0;
+		for (unsigned int i = 0; i < N; ++i) {
+			if (qi[i] != qf[i]) errors++;
+		}
+		printf("errors %d\n", errors);
 		gettimeofday(&t1, 0);
-		printf("double %.6f\n", 1e-6 * ((t1.tv_sec - t2.tv_sec) * 1e6 + t1.tv_usec - t2.tv_usec));
 	}
 	return 0;
 }
